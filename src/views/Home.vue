@@ -124,8 +124,8 @@ export default {
             .build();
 
           fetch(
-            "all.geojson"
-            // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
+            // "all.geojson"
+            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
               return response.json();
