@@ -30,6 +30,7 @@ export default {
           lng: 139.7671248
         },
         // minZoom: 15,
+        gestureHandling: "greedy",
         zoom: 16
       }
     };
@@ -101,7 +102,8 @@ export default {
         markersWontHide: true,
         basicFormatEvents: true,
         ignoreMapClick: true,
-        keepSpiderfied: true
+        keepSpiderfied: true,
+        circleFootSeparation: 100
       });
 
       window.SuperClusterAdapterLoader.getClusterer().then(Clusterer => {
@@ -121,9 +123,9 @@ export default {
             })
             .build();
 
-          // fetch("all.geojson")
           fetch(
-            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
+            "all.geojson"
+            // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
               return response.json();
@@ -160,5 +162,19 @@ body {
   padding: 20px;
   background-color: #fff;
   z-index: 1;
+}
+
+.markerLabels {
+  color: #313335;
+  font-size: 12px;
+  width: 8rem;
+  height: 2rem;
+  text-align: center;
+  margin-top: 5px;
+  margin-left: -4rem;
+  line-height: 1.2;
+  text-shadow: 1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff,
+    -1px -1px 0 #fff, 1px 1px 2px #000;
+  font-weight: bold;
 }
 </style>
