@@ -98,10 +98,10 @@ export default {
 
     google.maps.event.addListenerOnce(map, "tilesloaded", () => {
       const oms = new window.OverlappingMarkerSpiderfier(map, {
-        markersWontMove: true,
-        markersWontHide: true,
+        // markersWontMove: true,
+        // markersWontHide: true,
         // basicFormatEvents: true,
-        ignoreMapClick: true,
+        // ignoreMapClick: true,
         // keepSpiderfied: true,
         circleFootSeparation: 100,
         spiralFootSeparation: 100
@@ -140,8 +140,8 @@ export default {
             .build();
 
           fetch(
-            "all.geojson"
-            // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
+            // "all.geojson"
+            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
               return response.json();
