@@ -100,18 +100,34 @@ export default {
       const oms = new window.OverlappingMarkerSpiderfier(map, {
         markersWontMove: true,
         markersWontHide: true,
-        basicFormatEvents: true,
+        // basicFormatEvents: true,
         ignoreMapClick: true,
-        keepSpiderfied: true,
-        circleFootSeparation: 100
+        // keepSpiderfied: true,
+        circleFootSeparation: 100,
+        spiralFootSeparation: 100
       });
+
+      // oms.addListener('format', function(marker, status) {
+      //   var iconURL = status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? 'marker-highlight.svg' :
+      //     status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? 'marker-plus.svg' :
+      //     status == window.OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? 'marker.svg' :
+      //     null;
+      //   marker.setIcon({
+      //     url: "https://jawj.github.io/OverlappingMarkerSpiderfier/" + iconURL,
+      //     scaledSize: new google.maps.Size(23, 32)
+      //   });
+      // });
 
       window.SuperClusterAdapterLoader.getClusterer().then(Clusterer => {
         if (Clusterer) {
           const clusterer = new Clusterer.Builder(map)
+            .withOverlapMarkerSpiderfier(oms)
             .withRadius(300)
             .withMaxZoom(18)
-            .withOverlapMarkerSpiderfier(oms)
+            .withCustomMarkerIcon(
+              () =>
+                "https://jawj.github.io/OverlappingMarkerSpiderfier/marker.svg"
+            )
             .withMarkerClick((marker, event) => {
               // debugger
               console.log(event.feature);
@@ -124,8 +140,8 @@ export default {
             .build();
 
           fetch(
-            // "all.geojson"
-            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
+            "all.geojson"
+            // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
               return response.json();
@@ -165,10 +181,10 @@ body {
 }
 
 .markerLabels {
-  color: #313335;
+  color: #1956a6;
   font-size: 12px;
   width: 8rem;
-  height: 2rem;
+  height: 1rem;
   text-align: center;
   margin-top: 5px;
   margin-left: -4rem;
@@ -176,5 +192,8 @@ body {
   text-shadow: 1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff,
     -1px -1px 0 #fff, 1px 1px 2px #000;
   font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
