@@ -26,8 +26,8 @@ export default {
       mapConfig: {
         mapId: "37351173ff5408f5",
         center: {
-          lat: 35.7015642,
-          lng: 139.6583985
+          lat: 35.6812362,
+          lng: 139.7671248
         },
         // minZoom: 15,
         zoom: 16
@@ -95,8 +95,7 @@ export default {
     const google = window.google;
     map = new google.maps.Map(this.$refs.map, this.mapConfig);
 
-    google.maps.event.addListenerOnce(map, 'tilesloaded', () => {
-
+    google.maps.event.addListenerOnce(map, "tilesloaded", () => {
       const oms = new window.OverlappingMarkerSpiderfier(map, {
         markersWontMove: true,
         markersWontHide: true,
@@ -109,7 +108,7 @@ export default {
         if (Clusterer) {
           const clusterer = new Clusterer.Builder(map)
             .withRadius(300)
-            .withMaxZoom(17)
+            .withMaxZoom(18)
             .withOverlapMarkerSpiderfier(oms)
             .withMarkerClick((marker, event) => {
               // debugger
@@ -122,13 +121,19 @@ export default {
             })
             .build();
 
-          fetch("all.geojson").then(response => {
-            return response.json();
-          }).then(data => {
-            clusterer.load(data);
-          }).catch(err => {
-            console.log("Cannot fetch GeoJSON data for this example", err);
-          });
+          // fetch("all.geojson")
+          fetch(
+            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
+          )
+            .then(response => {
+              return response.json();
+            })
+            .then(data => {
+              clusterer.load(data);
+            })
+            .catch(err => {
+              console.log("Cannot fetch GeoJSON data for this example", err);
+            });
         }
       });
     });
