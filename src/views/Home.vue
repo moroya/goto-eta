@@ -87,7 +87,7 @@ export default {
   async mounted() {
     await new Loader({
       apiKey: this.apiKey,
-      version: "beta",
+      version: "weekly",
       mapIds: [this.mapConfig.mapId],
       libraries: ["places"]
     }).load();
