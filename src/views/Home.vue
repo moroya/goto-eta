@@ -107,16 +107,16 @@ export default {
         spiralFootSeparation: 100
       });
 
-      // oms.addListener('format', function(marker, status) {
-      //   var iconURL = status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? 'marker-highlight.svg' :
-      //     status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? 'marker-plus.svg' :
-      //     status == window.OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? 'marker.svg' :
-      //     null;
-      //   marker.setIcon({
-      //     url: "https://jawj.github.io/OverlappingMarkerSpiderfier/" + iconURL,
-      //     scaledSize: new google.maps.Size(23, 32)
-      //   });
-      // });
+      oms.addListener('format', function(marker, status) {
+        var iconURL = status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? 'marker-highlight.svg' :
+          status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? 'marker-plus.svg' :
+          status == window.OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? 'marker.svg' :
+          null;
+        marker.setIcon({
+          url: "https://jawj.github.io/OverlappingMarkerSpiderfier/" + iconURL,
+          scaledSize: new google.maps.Size(23, 32)
+        });
+      });
 
       window.SuperClusterAdapterLoader.getClusterer().then(Clusterer => {
         if (Clusterer) {
@@ -140,8 +140,8 @@ export default {
             .build();
 
           fetch(
-            // "all.geojson"
-            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
+            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/tokyo_pdf_format.json"
+            // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
               return response.json();

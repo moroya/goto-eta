@@ -1997,7 +1997,7 @@ function () {
     var options = this.getMarkerOptions(scfeature); // const marker = new google.maps.Marker(options);
 // if (!scfeature.properties.cluster)debugger;
     var marker = scfeature.properties.cluster ? new google.maps.Marker(options) : new window.MarkerWithLabel(__assign(__assign({}, options), {
-      labelContent: scfeature.properties.name,
+      labelContent: scfeature.properties.name ? scfeature.properties.name : scfeature.properties.place_id,
       labelAnchor: new google.maps.Point(0, 0),
       labelClass: "markerLabels"
     }));
