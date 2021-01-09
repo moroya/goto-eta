@@ -133,8 +133,7 @@ export default {
      */
     async loadGeoJson() {
       try {
-        // とりあえずTOKYO
-        const geojson = await fetch("tokyo_pdf2.geojson").then(res =>
+        const geojson = await fetch("all.geojson").then(res =>
           res.json()
         );
         clusterer.load(geojson);
