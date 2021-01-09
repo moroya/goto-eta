@@ -8,7 +8,7 @@
     </div>
 
     <div
-      class="clusterChildren"
+      class="infoWindow"
       v-if="clusterChildren.length > 0 || placeDetail"
     >
       <div><a href="#" @click.prevent="closeInfoWindow">[ 閉じる ]</a></div>
@@ -292,16 +292,18 @@ body {
   left: 5px;
   bottom: 30px;
   padding: 20px;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 2;
   z-index: 1;
 }
 
-.clusterChildren {
+.infoWindow {
   position: absolute;
   top: 10px;
   left: 10px;
-  width: 50%;
-  max-height: 30%;
+  width: 320px;
+  max-height: 80%;
   word-break: break-all;
   overflow: hidden;
   overflow-x: hidden;
