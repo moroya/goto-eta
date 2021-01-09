@@ -29,9 +29,10 @@ export default {
           lat: 35.6812362,
           lng: 139.7671248
         },
-        // minZoom: 15,
+        zoom: 16,
+        minZoom: 9,
+        maxZoom: 20,
         gestureHandling: "greedy",
-        zoom: 16
       }
     };
   },
@@ -97,33 +98,11 @@ export default {
     map = new google.maps.Map(this.$refs.map, this.mapConfig);
 
     google.maps.event.addListenerOnce(map, "tilesloaded", () => {
-      const oms = new window.OverlappingMarkerSpiderfier(map, {
-        // markersWontMove: true,
-        // markersWontHide: true,
-        // basicFormatEvents: true,
-        // ignoreMapClick: true,
-        // keepSpiderfied: true,
-        circleFootSeparation: 100,
-        spiralFootSeparation: 100
-      });
-
-      oms.addListener('format', function(marker, status) {
-        var iconURL = status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? 'marker-highlight.svg' :
-          status == window.OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? 'marker-plus.svg' :
-          status == window.OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? 'marker.svg' :
-          null;
-        marker.setIcon({
-          url: "https://jawj.github.io/OverlappingMarkerSpiderfier/" + iconURL,
-          scaledSize: new google.maps.Size(23, 32)
-        });
-      });
-
       window.SuperClusterAdapterLoader.getClusterer().then(Clusterer => {
         if (Clusterer) {
           const clusterer = new Clusterer.Builder(map)
-            .withOverlapMarkerSpiderfier(oms)
-            .withRadius(300)
-            .withMaxZoom(18)
+            .withRadius(250)
+            .withMaxZoom(20)
             .withCustomMarkerIcon(
               () =>
                 "https://jawj.github.io/OverlappingMarkerSpiderfier/marker.svg"
@@ -140,7 +119,7 @@ export default {
             .build();
 
           fetch(
-            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/tokyo_pdf_format.json"
+            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/tokyo_pdf.geojson"
             // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
