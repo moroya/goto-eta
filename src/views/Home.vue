@@ -119,7 +119,7 @@ export default {
             .build();
 
           fetch(
-            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/tokyo_pdf.geojson"
+            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/tokyo_pdf2.geojson"
             // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
