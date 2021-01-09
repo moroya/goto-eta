@@ -7,10 +7,7 @@
       現在地を取得
     </div>
 
-    <div
-      class="infoWindow"
-      v-if="clusterChildren.length > 0 || placeDetail"
-    >
+    <div class="infoWindow" v-if="clusterChildren.length > 0 || placeDetail">
       <div><a href="#" @click.prevent="closeInfoWindow">[ 閉じる ]</a></div>
       <ul v-if="clusterChildren.length > 0">
         <li v-for="marker in clusterChildren" :key="marker.properties.name">
@@ -22,11 +19,18 @@
 
       <div v-if="placeDetail">
         <h2>{{ placeDetail.markerName }}</h2>
-        <div>API NAME: {{ placeDetail.name }}</div>
         <div>
           <a :href="placeDetail.url" target="_blank">Google Mapで開く</a>
         </div>
+        <div>API NAME: {{ placeDetail.name }}</div>
+        <div>
+          Website:
+          <a :href="placeDetail.website" target="_blank">{{
+            placeDetail.website
+          }}</a>
+        </div>
         <div>Rating: {{ placeDetail.rating }}</div>
+        <div>Address: {{ placeDetail.vicinity }}</div>
         <div v-if="placeDetail.photoUrls.length > 0">
           <div class="photos">
             <span v-for="url in placeDetail.photoUrls" :key="url"
@@ -194,9 +198,11 @@ export default {
             this.placeDetail = place;
             this.placeDetail.markerName =
               marker.title || marker.properties.name;
-            this.placeDetail.photoUrls = this.placeDetail.photos.map(photo =>
-              photo.getUrl({ maxWidth: 200, maxHeight: 200 })
-            );
+            this.placeDetail.photoUrls = this.placeDetail.photos
+              ? this.placeDetail.photos.map(photo =>
+                  photo.getUrl({ maxWidth: 200, maxHeight: 200 })
+                )
+              : [];
           }
         }
       );
