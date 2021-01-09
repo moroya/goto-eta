@@ -6,6 +6,18 @@
     <div class="getCurrentLocation" @click="panToCurrentLocation">
       現在地を取得
     </div>
+
+    <div
+      class="clusterChildren"
+      v-if="clusterChildren.length > 0 || placeDetail"
+    >
+      <ul v-if="clusterChildren.length > 0">
+        <li v-for="marker in clusterChildren" :key="marker.properties.name">
+          {{ marker.properties.name }}
+        </li>
+      </ul>
+      <div v-if="placeDetail">{{ placeDetail }}</div>
+    </div>
   </div>
 </template>
 
@@ -13,6 +25,7 @@
 import { Loader } from "@googlemaps/js-api-loader";
 
 let google, map, place;
+let Clusterer, clusterer;
 
 export default {
   name: "Map",
@@ -21,6 +34,9 @@ export default {
     return {
       apiKey: process.env.VUE_APP_GOOGLE_MAP_API_KEY, // API KEY（MapとPlaceのみ有効にしてあるやつ）
       geoPositioning: false, // 現在地を取得中かどうか
+
+      clusterChildren: [], // 選択したクラスター内のマーカー
+      placeDetail: null, // 選択した店の詳細情報
 
       // Google Mapの設定
       mapConfig: {
@@ -36,7 +52,15 @@ export default {
 
         // ズーム可能範囲
         minZoom: 9,
-        maxZoom: 19
+        maxZoom: 19,
+
+        // UI非表示
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false
       }
     };
   },
@@ -51,6 +75,9 @@ export default {
       this.mapConfig.center.lat = Number(lat || this.mapConfig.center.lat);
       this.mapConfig.center.lng = Number(lng || this.mapConfig.center.lng);
     }
+
+    // FIXME: とりあえず動作確認だけ… ゆるして
+    window.clusterClickHandler = this.clusterClickHandler;
   },
 
   // DOM初期化
@@ -73,21 +100,22 @@ export default {
     place = new google.maps.places.PlacesService(map);
 
     // 初回のみ、タイル読み込みが完了したらGeoJSONをロード
-    google.maps.event.addListenerOnce(map, "tilesloaded", this.loadGeoJson);
+    google.maps.event.addListenerOnce(
+      map,
+      "tilesloaded",
+      this.clustererBuilder
+    );
   },
 
   methods: {
     /*
-     * GeoJSONをロードしてクラスタリング
+     * Super Clusterを初期化
      */
-    async loadGeoJson() {
-      // Superclusterを初期化
-      const Clusterer = await window.SuperClusterAdapterLoader.getClusterer();
-
-      if (!Clusterer) return;
+    async clustererBuilder() {
+      Clusterer = await window.SuperClusterAdapterLoader.getClusterer();
 
       // クラスタを初期化
-      const clusterer = new Clusterer.Builder(map)
+      clusterer = new Clusterer.Builder(map)
         .withRadius(250)
         .withMaxZoom(19)
         .withCustomMarkerIcon(this.markerIconByGenre)
@@ -95,7 +123,15 @@ export default {
         .build();
 
       // GeoJSONをロード
+      this.loadGeoJson();
+    },
+
+    /*
+     * GeoJSONをロード
+     */
+    async loadGeoJson() {
       try {
+        // とりあえずTOKYO
         const geojson = await fetch("tokyo_pdf2.geojson").then(res =>
           res.json()
         );
@@ -103,6 +139,14 @@ export default {
       } catch (err) {
         console.log("Cannot fetch GeoJSON data for this example", err);
       }
+    },
+
+    /*
+     * これ以上ズームできない状態でクラスターがクリックされたとき
+     */
+    clusterClickHandler(markers) {
+      this.clusterChildren = markers;
+      this.placeDetail = null;
     },
 
     /*
@@ -129,7 +173,8 @@ export default {
         },
         (place, status) => {
           if (status == google.maps.places.PlacesServiceStatus.OK) {
-            console.log(place);
+            this.clusterChildren = [];
+            this.placeDetail = place;
           }
         }
       );
@@ -219,6 +264,21 @@ body {
   padding: 20px;
   background-color: #fff;
   z-index: 1;
+}
+
+.clusterChildren {
+  position: absolute;
+  top: 5px;
+  left: 30px;
+  max-width: 70%;
+  max-height: 25%;
+  word-break: break-all;
+  overflow: scroll;
+  font-size: 13px;
+  padding: 5px;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 2;
 }
 
 .markerLabels {

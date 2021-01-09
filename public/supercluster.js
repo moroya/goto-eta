@@ -522,10 +522,8 @@ class Supercluster {
         }
 
         if(expansionZoom > this.options.maxZoom) {
-          console.log(children);
-          children.forEach(marker => {
-            console.log(marker.properties.name)
-          })
+          // あとで直す
+          window.clusterClickHandler(children);
         }
 
         return expansionZoom;
