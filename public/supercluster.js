@@ -512,12 +512,22 @@ class Supercluster {
 
     getClusterExpansionZoom(clusterId) {
         let expansionZoom = this._getOriginZoom(clusterId) - 1;
-        while (expansionZoom <= this.options.maxZoom) {
-            const children = this.getChildren(clusterId);
+        let children;
+
+          while (expansionZoom <= this.options.maxZoom) {
+            children = this.getChildren(clusterId);
             expansionZoom++;
             if (children.length !== 1) break;
             clusterId = children[0].properties.cluster_id;
         }
+
+        if(expansionZoom > this.options.maxZoom) {
+          console.log(children);
+          children.forEach(marker => {
+            console.log(marker.properties.name)
+          })
+        }
+
         return expansionZoom;
     }
 
@@ -1999,7 +2009,8 @@ function () {
     var marker = scfeature.properties.cluster ? new google.maps.Marker(options) : new window.MarkerWithLabel(__assign(__assign({}, options), {
       labelContent: scfeature.properties.name ? scfeature.properties.name : "",
       labelAnchor: new google.maps.Point(0, 0),
-      labelClass: "markerLabels"
+      labelClass: "markerLabels",
+      placeId: scfeature.properties.place ? scfeature.properties.place : null,
     }));
     this.assignAdditionalProperties(marker, scfeature);
     this.assignEventsToMarker(marker);

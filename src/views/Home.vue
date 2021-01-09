@@ -11,9 +11,7 @@
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from "@/components/HelloWorld.vue";
 import { Loader } from "@googlemaps/js-api-loader";
-// import MarkerClusterer from "@googlemaps/markerclustererplus";
 
 let map;
 
@@ -22,7 +20,7 @@ export default {
 
   data() {
     return {
-      apiKey: "AIzaSyAtmlJCsm9b7cUifbZYrs27hEo6CobdoUI",
+      apiKey: process.env.VUE_APP_GOOGLE_MAP_API_KEY,
       mapConfig: {
         mapId: "37351173ff5408f5",
         center: {
@@ -31,8 +29,8 @@ export default {
         },
         zoom: 16,
         minZoom: 9,
-        maxZoom: 20,
-        gestureHandling: "greedy",
+        maxZoom: 19,
+        gestureHandling: "greedy"
       }
     };
   },
@@ -50,9 +48,7 @@ export default {
 
             localStorage.setItem("lastLat", pos.lat);
             localStorage.setItem("lastLng", pos.lng);
-            // infoWindow.setPosition(pos);
-            // infoWindow.setContent("Location found.");
-            // infoWindow.open(map);
+
             map.setCenter(pos);
             map.setZoom(16);
           },
@@ -97,29 +93,36 @@ export default {
     const google = window.google;
     map = new google.maps.Map(this.$refs.map, this.mapConfig);
 
+    // infoWindow = new google.maps.InfoWindow({
+    //   content: ""
+    // });
+
     google.maps.event.addListenerOnce(map, "tilesloaded", () => {
       window.SuperClusterAdapterLoader.getClusterer().then(Clusterer => {
         if (Clusterer) {
           const clusterer = new Clusterer.Builder(map)
             .withRadius(250)
-            .withMaxZoom(20)
+            .withMaxZoom(19)
             .withCustomMarkerIcon(
               () =>
                 "https://jawj.github.io/OverlappingMarkerSpiderfier/marker.svg"
             )
             .withMarkerClick((marker, event) => {
-              // debugger
-              console.log(event.feature);
               // infoWindow.close();
-              // var title = marker.getTitle();
-              // var content = `<h2>${title}</h2>`;
+              map.panTo(event.latLng);
+
+              // const content = `<h2>${marker.title}</h2><h3>${marker.placeId}</h3>`;
               // infoWindow.setContent(content);
               // infoWindow.open(map, marker);
+              
+              // map.panTo(event.latLng);
+              console.log(event.latLng);
+
             })
             .build();
 
           fetch(
-            "https://raw.githubusercontent.com/moroya/goto-eta/main/public/tokyo_pdf2.geojson"
+            "tokyo_pdf2.geojson"
             // "https://raw.githubusercontent.com/moroya/goto-eta/main/public/all.geojson"
           )
             .then(response => {
