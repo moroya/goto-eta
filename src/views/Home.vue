@@ -13,7 +13,9 @@
     >
       <ul v-if="clusterChildren.length > 0">
         <li v-for="marker in clusterChildren" :key="marker.properties.name">
-          {{ marker.properties.name }}
+          <a href="#" @click.prevent="markerClickHandler(marker)">{{
+            marker.properties.name
+          }}</a>
         </li>
       </ul>
       <div v-if="placeDetail">{{ placeDetail }}</div>
@@ -153,11 +155,13 @@ export default {
      * マーカーがクリックされたとき
      */
     markerClickHandler(marker, event) {
-      map.panTo(event.latLng);
+      if (event) {
+        map.panTo(event.latLng);
+      }
 
       place.getDetails(
         {
-          placeId: marker.placeId,
+          placeId: marker.placeId || marker.properties.place,
           fields: [
             "formatted_address",
             "name",
