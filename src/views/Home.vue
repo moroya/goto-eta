@@ -11,6 +11,7 @@
       class="clusterChildren"
       v-if="clusterChildren.length > 0 || placeDetail"
     >
+      <div><a href="#" @click.prevent="closeInfoWindow">[ 閉じる ]</a></div>
       <ul v-if="clusterChildren.length > 0">
         <li v-for="marker in clusterChildren" :key="marker.properties.name">
           <a href="#" @click.prevent="markerClickHandler(marker)">{{
@@ -18,7 +19,22 @@
           }}</a>
         </li>
       </ul>
-      <div v-if="placeDetail">{{ placeDetail }}</div>
+
+      <div v-if="placeDetail">
+        <h2>{{ placeDetail.markerName }}</h2>
+        <div>API NAME: {{ placeDetail.name }}</div>
+        <div>
+          <a :href="placeDetail.url" target="_blank">Google Mapで開く</a>
+        </div>
+        <div>Rating: {{ placeDetail.rating }}</div>
+        <div v-if="placeDetail.photoUrls.length > 0">
+          <div class="photos">
+            <span v-for="url in placeDetail.photoUrls" :key="url"
+              ><img :src="url" :alt="placeDetail.name"
+            /></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -133,9 +149,7 @@ export default {
      */
     async loadGeoJson() {
       try {
-        const geojson = await fetch("all.geojson").then(res =>
-          res.json()
-        );
+        const geojson = await fetch("all.geojson").then(res => res.json());
         clusterer.load(geojson);
       } catch (err) {
         console.log("Cannot fetch GeoJSON data for this example", err);
@@ -178,9 +192,22 @@ export default {
           if (status == google.maps.places.PlacesServiceStatus.OK) {
             this.clusterChildren = [];
             this.placeDetail = place;
+            this.placeDetail.markerName =
+              marker.title || marker.properties.name;
+            this.placeDetail.photoUrls = this.placeDetail.photos.map(photo =>
+              photo.getUrl({ maxWidth: 200, maxHeight: 200 })
+            );
           }
         }
       );
+    },
+
+    /*
+     * 情報ウィンドウを閉じる
+     */
+    closeInfoWindow() {
+      this.clusterChildren = [];
+      this.placeDetail = null;
     },
 
     /*
@@ -271,17 +298,32 @@ body {
 
 .clusterChildren {
   position: absolute;
-  top: 5px;
-  left: 30px;
-  max-width: 70%;
-  max-height: 25%;
+  top: 10px;
+  left: 10px;
+  width: 50%;
+  max-height: 30%;
   word-break: break-all;
-  overflow: scroll;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   font-size: 13px;
   padding: 5px;
   text-align: left;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
   z-index: 2;
+}
+
+.photos {
+  span {
+    display: inline-block;
+    vertical-align: top;
+    margin: 5px;
+  }
+
+  img {
+    max-width: 200px;
+  }
 }
 
 .markerLabels {
