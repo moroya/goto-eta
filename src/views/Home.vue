@@ -29,7 +29,16 @@
             placeDetail.website
           }}</a>
         </div>
-        <div>Rating: {{ placeDetail.rating }}</div>
+        <div>
+          Tel:
+          <a :href="'tel:' + placeDetail.formatted_phone_number">{{
+            placeDetail.formatted_phone_number
+          }}</a>
+        </div>
+        <div>
+          Rating: {{ placeDetail.rating }} (クチコミ
+          {{ placeDetail.user_ratings_total }}件)
+        </div>
         <div>Address: {{ placeDetail.vicinity }}</div>
         <div v-if="placeDetail.photoUrls.length > 0">
           <div class="photos">
@@ -130,7 +139,7 @@ export default {
   },
 
   methods: {
-    /*
+    /**
      * Super Clusterを初期化
      */
     async clustererBuilder() {
@@ -148,7 +157,7 @@ export default {
       this.loadGeoJson();
     },
 
-    /*
+    /**
      * GeoJSONをロード
      */
     async loadGeoJson() {
@@ -160,7 +169,7 @@ export default {
       }
     },
 
-    /*
+    /**
      * これ以上ズームできない状態でクラスターがクリックされたとき
      */
     clusterClickHandler(markers) {
@@ -168,7 +177,7 @@ export default {
       this.placeDetail = null;
     },
 
-    /*
+    /**
      * マーカーがクリックされたとき
      */
     markerClickHandler(marker, event) {
@@ -188,7 +197,6 @@ export default {
             "formatted_phone_number",
             "website",
             "rating",
-            "reviews",
             "user_ratings_total"
           ]
         },
@@ -199,16 +207,16 @@ export default {
             this.placeDetail.markerName =
               marker.title || marker.properties.name;
             this.placeDetail.photoUrls = this.placeDetail.photos
-              ? this.placeDetail.photos.map(photo =>
-                  photo.getUrl({ maxWidth: 200, maxHeight: 200 })
-                )
+              ? this.placeDetail.photos
+                  .splice(0, 1)
+                  .map(photo => photo.getUrl({ maxWidth: 300, maxHeight: 300 }))
               : [];
           }
         }
       );
     },
 
-    /*
+    /**
      * 情報ウィンドウを閉じる
      */
     closeInfoWindow() {
@@ -216,7 +224,7 @@ export default {
       this.placeDetail = null;
     },
 
-    /*
+    /**
      * ジャンルからマーカーのアイコンを設定
      */
     markerIconByGenre() {
@@ -224,7 +232,7 @@ export default {
       return "https://jawj.github.io/OverlappingMarkerSpiderfier/marker.svg";
     },
 
-    /*
+    /**
      * 現在位置を取得して地図をパン
      */
     panToCurrentLocation() {
@@ -259,7 +267,7 @@ export default {
       );
     },
 
-    /*
+    /**
      * 現在位置の取得エラーハンドリング
      */
     handleLocationError(err) {
@@ -308,7 +316,7 @@ body {
   position: absolute;
   top: 10px;
   left: 10px;
-  width: 320px;
+  width: 330px;
   max-height: 80%;
   word-break: break-all;
   overflow: hidden;
@@ -330,7 +338,7 @@ body {
   }
 
   img {
-    max-width: 200px;
+    max-width: 300px;
   }
 }
 
